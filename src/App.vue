@@ -1,15 +1,46 @@
 <script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
+import { reactive, ref } from 'vue'
 import HelloWorld from './components/HelloWorld.vue'
 import ReloadPWA from './components/ReloadPWA.vue'
+import axios from 'axios'
+
+const isAuthenticated = ref(false)
+const form = reactive({
+  username: '',
+  password: '',
+})
+
+const login = async () => {
+  try {
+    const response = await axios.post('https://marketingapi.nl/auth/login', form)
+    isAuthenticated.value = true
+  } catch (error) {
+    isAuthenticated.value = false
+    console.log(error)
+  }
+}
 </script>
 
 <template>
   <ReloadPWA />
   <img alt="Vue logo" src="./assets/logo.png" />
   <HelloWorld msg="Hello Vue 3 + Vite" />
-  <div>Een aanpassing in de app...</div>
+  <div>
+    <form @submit.prevent="login">
+      <div>
+        <label for="email">Email</label>
+        <input type="email" id="email" v-model="form.username" />
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" v-model="form.password" />
+      </div>
+      <button type="submit">Login</button>
+    </form>
+    <div>
+      {{ isAuthenticated }}
+    </div>
+  </div>
 </template>
 
 <style>
